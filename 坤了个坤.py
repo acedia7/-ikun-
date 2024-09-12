@@ -8,12 +8,12 @@ y = 100
 os.environ['SDL_VIDEO_WINDOW_POS'] = f'{x},{y}'
 import pgzrun
 
-# 定义游戏相关属性
+# 定义游戏相关属性  # ai
 TITLE = '坤了个坤'
 WIDTH = 600
 HEIGHT = 720
 
-# 自定义游戏常量
+# 自定义游戏常量 # ai
 T_WIDTH = 60
 T_HEIGHT = 66
 
@@ -30,18 +30,18 @@ is_start_screen = True# 是否在开始界面
 current_level = 1
 max_levels = 3  # 最高关卡数
 
-time_left = 60  # 每个关卡的时间限制，初始为60秒
+time_left = 60  # 每个关卡的时间限制，初始为60秒   # ai
 game_over = False  # 游戏失败标志
 game_complete = False
 # 暂停标志
 is_paused = False  # 游戏是否暂停
 is_timer_paused = False  # 倒计时是否暂停
 
-# 图标的位置和图标对象
+# 图标的位置和图标对象  # ai
 icon_pos = (500, 50)
 icon = Actor('ad', icon_pos)
 
-
+# ai
 start_button_rect = Rect((WIDTH // 2 - 100, HEIGHT // 2), (200, 50))
 # 重新开始按钮的坐标和尺寸
 restart_button_rect = Rect((WIDTH // 2 - 100, HEIGHT // 2 + 100), (200, 50))
@@ -134,9 +134,10 @@ def generate_level(level):
 
 # 游戏帧绘制函数
 # 修改 draw 函数，增加通关显示
-def draw():
+def draw():  # ai
     screen.clear()
     screen.blit('back', (0, 0))
+    global game_over
 
     if is_start_screen:
         # 绘制开始界面
@@ -174,19 +175,20 @@ def draw():
         # 超过7张，失败
         if len(docks) >= 7 and not is_paused:
             screen.blit('end', (0, 0))
+            game_over = True
         # 没有剩牌，胜利
         if len(tiles) == 0 and not is_paused:
             screen.blit('win', (0, 0))
             next_level()  # 通关后进入下一关
 
         if game_over:
-            screen.draw.text("Time's Up! You Lose!", (WIDTH // 2 - 200, HEIGHT // 2), fontsize=50, color="red")
+            screen.draw.text(" You Lose!", (WIDTH // 2 - 100, HEIGHT // 2), fontsize=50, color="red")
             screen.draw.filled_rect(restart_button_rect, 'gray')
             screen.draw.text("Restart", center=restart_button_rect.center, fontsize=40, color="white")
 
 
 # 倒计时函数
-def update_timer():
+def update_timer():  # ai
     global time_left, game_over
     if time_left > 0:
         time_left -= 1
@@ -195,7 +197,7 @@ def update_timer():
         clock.unschedule(update_timer)  # 停止计时
 
 # 鼠标点击响应
-def on_mouse_down(pos):
+def on_mouse_down(pos):   # ai
     global docks, is_paused
     global is_start_screen
     global current_level
@@ -242,11 +244,19 @@ def restart_current_level(current_level):
     print(f"重新开始关卡 {current_level}")
     tiles.clear()
     docks.clear()  # 清空选中的牌
+    global time_left
+    if current_level == 1:
+        time_left = 60
+    elif current_level == 2:
+        time_left = 120
+    elif current_level == 3:
+        time_left = 60*4
     generate_level(current_level)  # 重新生成当前关卡
 
 # 播放视频并暂停游戏
-def play_video():
+def play_video():  # ai
     global is_paused
+
     print("播放视频 15 秒...")
     video_path = os.path.abspath("./images/kun1.mp4")  # 获取视频文件的绝对路径
     os.startfile(video_path)  # 使用系统默认应用播放视频
@@ -258,7 +268,7 @@ def play_video():
     clock.schedule_unique(resume_game, 30)  # 30 秒后恢复游戏
 
 # 恢复游戏
-def resume_game():
+def resume_game(): # ai
     global is_paused
     print("恢复游戏")
     pygame.mixer.music.unpause()  # 恢复背景音乐
@@ -267,7 +277,7 @@ def resume_game():
     restart_current_level(current_level)
 
 # 进入下一关卡
-def next_level():
+def next_level():  # ai
     global current_level, game_complete
     if current_level < max_levels:
         current_level += 1
